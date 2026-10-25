@@ -1,0 +1,420 @@
+{
+  "version": 1,
+  "origin": "https://customer-recovery-wire.links.example.com",
+  "now": 1800000000123,
+  "configuration": {
+    "appIdPrefix": "PARN12345X",
+    "fullAppBundleID": "app.customer.recovery.wire",
+    "clipBundleID": "app.customer.recovery.wire.Clip",
+    "appGroupIdentifier": "group.app.customer.recovery.wire"
+  },
+  "create": {
+    "version": 1,
+    "scope": {
+      "projectID": "project_customer_recovery_wire_v1",
+      "channel": "ios_app_clip"
+    },
+    "invocation": {
+      "id": "11111111-1111-4111-8111-111111111111",
+      "operationID": "22222222-2222-4222-8222-222222222222",
+      "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+      "capturedAt": 1800000000123,
+      "expiresAt": 1800604800123
+    }
+  },
+  "resolve": {
+    "version": 1,
+    "scope": {
+      "projectID": "project_customer_recovery_wire_v1",
+      "channel": "ios_app_clip"
+    },
+    "receiptID": "33333333-3333-4333-8333-333333333333",
+    "deliveryID": "44444444-4444-4444-8444-444444444444"
+  },
+  "resolveUnpinned": {
+    "version": 1,
+    "scope": {
+      "projectID": "project_customer_recovery_wire_v1",
+      "channel": "ios_app_clip"
+    }
+  },
+  "register": {
+    "version": 1,
+    "scope": {
+      "projectID": "project_customer_recovery_wire_v1",
+      "channel": "ios_app_clip"
+    },
+    "keyID": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="
+  },
+  "acknowledge": {
+    "version": 1,
+    "scope": {
+      "projectID": "project_customer_recovery_wire_v1",
+      "channel": "ios_app_clip"
+    },
+    "receiptID": "33333333-3333-4333-8333-333333333333",
+    "deliveryID": "44444444-4444-4444-8444-444444444444",
+    "operationID": "55555555-5555-4555-8555-555555555555",
+    "outcome": "applied"
+  },
+  "prepared": {
+    "version": 1,
+    "result": "prepared",
+    "receipt": {
+      "id": "33333333-3333-4333-8333-333333333333",
+      "deliveryID": "44444444-4444-4444-8444-444444444444",
+      "scope": {
+        "projectID": "project_customer_recovery_wire_v1",
+        "channel": "ios_app_clip"
+      },
+      "invocation": {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "operationID": "22222222-2222-4222-8222-222222222222",
+        "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+        "capturedAt": 1800000000123,
+        "expiresAt": 1800604800123
+      },
+      "canonicalLinkID": "link_customer_recovery_wire_v1",
+      "destination": {
+        "route": "catalog/detail",
+        "data": {
+          "itemID": "42",
+          "title": "Canal café 🎟️",
+          "message": "Quote: \" slash: / backslash: \\ newline:\nseparator: paragraph: ",
+          "optional": null,
+          "nested": {
+            "enabled": true,
+            "value": 0.125
+          }
+        }
+      },
+      "expiresAt": 1800604800123
+    }
+  },
+  "acknowledged": {
+    "version": 1,
+    "result": "acknowledged",
+    "receiptID": "33333333-3333-4333-8333-333333333333",
+    "deliveryID": "44444444-4444-4444-8444-444444444444",
+    "operationID": "55555555-5555-4555-8555-555555555555",
+    "outcome": "applied"
+  },
+  "canonicalCases": [
+    {
+      "name": "create",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+          "capturedAt": 1800000000123,
+          "expiresAt": 1800604800123
+        }
+      },
+      "canonical": "{\"invocation\":{\"capturedAt\":1800000000123,\"expiresAt\":1800604800123,\"id\":\"11111111-1111-4111-8111-111111111111\",\"operationID\":\"22222222-2222-4222-8222-222222222222\",\"originalURL\":\"https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=\"},\"scope\":{\"channel\":\"ios_app_clip\",\"projectID\":\"project_customer_recovery_wire_v1\"},\"version\":1}",
+      "sha256": "857c56bd490ad3c070d20261e9a6cd7862880b0546d44022f696371430aa33a9"
+    },
+    {
+      "name": "resolve",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "receiptID": "33333333-3333-4333-8333-333333333333",
+        "deliveryID": "44444444-4444-4444-8444-444444444444"
+      },
+      "canonical": "{\"deliveryID\":\"44444444-4444-4444-8444-444444444444\",\"receiptID\":\"33333333-3333-4333-8333-333333333333\",\"scope\":{\"channel\":\"ios_app_clip\",\"projectID\":\"project_customer_recovery_wire_v1\"},\"version\":1}",
+      "sha256": "9787e9eba0f335576e92db0dd1a43c8d15c468fbd21aa2161864d9cacc3ca747"
+    },
+    {
+      "name": "resolve-unpinned",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        }
+      },
+      "canonical": "{\"scope\":{\"channel\":\"ios_app_clip\",\"projectID\":\"project_customer_recovery_wire_v1\"},\"version\":1}",
+      "sha256": "12dee44187187fd96123c5cdb1758dd380e379b5c5c3919afac63de37d61b9ec"
+    },
+    {
+      "name": "register",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "keyID": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="
+      },
+      "canonical": "{\"keyID\":\"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=\",\"scope\":{\"channel\":\"ios_app_clip\",\"projectID\":\"project_customer_recovery_wire_v1\"},\"version\":1}",
+      "sha256": "4520448657de9f47c03ecb18eb4e91dc5bde1b4b53126dc254667d628d6d15b3"
+    },
+    {
+      "name": "acknowledge",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "receiptID": "33333333-3333-4333-8333-333333333333",
+        "deliveryID": "44444444-4444-4444-8444-444444444444",
+        "operationID": "55555555-5555-4555-8555-555555555555",
+        "outcome": "applied"
+      },
+      "canonical": "{\"deliveryID\":\"44444444-4444-4444-8444-444444444444\",\"operationID\":\"55555555-5555-4555-8555-555555555555\",\"outcome\":\"applied\",\"receiptID\":\"33333333-3333-4333-8333-333333333333\",\"scope\":{\"channel\":\"ios_app_clip\",\"projectID\":\"project_customer_recovery_wire_v1\"},\"version\":1}",
+      "sha256": "e248ecea3582ca54376942be1c6a7724166b07a6ea6aab43472afa8adf6329de"
+    },
+    {
+      "name": "utf16-key-order",
+      "payload": {
+        "": "private-use",
+        "😀": "emoji",
+        "a": "ascii",
+        "é": "accent"
+      },
+      "canonical": "{\"a\":\"ascii\",\"é\":\"accent\",\"😀\":\"emoji\",\"\":\"private-use\"}",
+      "sha256": "ab478b7abb754c9a918a96fae73b70815386726b0f9b2abd23d89fdfe3442a96"
+    },
+    {
+      "name": "unicode-and-string-escapes",
+      "payload": {
+        "text": "café é 🎟️ 😀 / \" \\ \u0000\b\f\n\r\t\u001f  ",
+        "empty": "",
+        "optional": null
+      },
+      "canonical": "{\"empty\":\"\",\"optional\":null,\"text\":\"café é 🎟️ 😀 / \\\" \\\\ \\u0000\\b\\f\\n\\r\\t\\u001f  \"}",
+      "sha256": "9f0084a2cfa031c9e06acfcd15b9f9927a7ff3d783d3cd27f2e0320e07fb948b"
+    },
+    {
+      "name": "safe-integers",
+      "payload": {
+        "maximum": 9007199254740991,
+        "minimum": -9007199254740991,
+        "zero": 0
+      },
+      "canonical": "{\"maximum\":9007199254740991,\"minimum\":-9007199254740991,\"zero\":0}",
+      "sha256": "6c2ebfc38ada26e6c5cac0887ce0571e3fe2bdd108725e1364e1dc23b6cfd0e0"
+    },
+    {
+      "name": "minimum-milliseconds",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+          "capturedAt": 0,
+          "expiresAt": 60000
+        }
+      },
+      "canonical": "{\"invocation\":{\"capturedAt\":0,\"expiresAt\":60000,\"id\":\"11111111-1111-4111-8111-111111111111\",\"operationID\":\"22222222-2222-4222-8222-222222222222\",\"originalURL\":\"https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=\"},\"scope\":{\"channel\":\"ios_app_clip\",\"projectID\":\"project_customer_recovery_wire_v1\"},\"version\":1}",
+      "sha256": "6c192d28b18b99a0562618d736a8078da1a174bae32bc1db3a6051f4e54cbec6"
+    },
+    {
+      "name": "maximum-safe-milliseconds",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+          "capturedAt": 9007199254680991,
+          "expiresAt": 9007199254740991
+        }
+      },
+      "canonical": "{\"invocation\":{\"capturedAt\":9007199254680991,\"expiresAt\":9007199254740991,\"id\":\"11111111-1111-4111-8111-111111111111\",\"operationID\":\"22222222-2222-4222-8222-222222222222\",\"originalURL\":\"https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=\"},\"scope\":{\"channel\":\"ios_app_clip\",\"projectID\":\"project_customer_recovery_wire_v1\"},\"version\":1}",
+      "sha256": "d80f77f3a1e586c8accf67a9110300753e17cd884705a5b86cd425376a16f566"
+    }
+  ],
+  "validCreateCases": [
+    {
+      "name": "minimum-milliseconds",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+          "capturedAt": 0,
+          "expiresAt": 60000
+        }
+      },
+      "now": 0
+    },
+    {
+      "name": "maximum-safe-milliseconds",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+          "capturedAt": 9007199254680991,
+          "expiresAt": 9007199254740991
+        }
+      },
+      "now": 9007199254680991
+    }
+  ],
+  "invalidCreateCases": [
+    {
+      "name": "negative-captured-milliseconds",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+          "capturedAt": -1,
+          "expiresAt": 60000
+        }
+      },
+      "now": 0,
+      "reason": "invalidData"
+    },
+    {
+      "name": "fractional-captured-milliseconds",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+          "capturedAt": 1800000000123.5,
+          "expiresAt": 1800604800123
+        }
+      },
+      "now": 1800000000123,
+      "reason": "invalidData"
+    },
+    {
+      "name": "unsafe-captured-milliseconds",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+          "capturedAt": 9007199254740992,
+          "expiresAt": 9007199254740992
+        }
+      },
+      "now": 9007199254740991,
+      "reason": "invalidData"
+    },
+    {
+      "name": "unsafe-expiry-milliseconds",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+          "capturedAt": 9007199254680991,
+          "expiresAt": 9007199254740992
+        }
+      },
+      "now": 9007199254680991,
+      "reason": "invalidData"
+    },
+    {
+      "name": "excessive-lifetime",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=",
+          "capturedAt": 1800000000123,
+          "expiresAt": 1800604800124
+        }
+      },
+      "now": 1800000000123,
+      "reason": "invalidData"
+    },
+    {
+      "name": "url-fragment",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?utm_source=clip%20demo&context=a%2Fb&context=%F0%9F%8E%9F%EF%B8%8F&quote=%22&escaped=%5C&plus=a+b&empty=#details",
+          "capturedAt": 1800000000123,
+          "expiresAt": 1800604800123
+        }
+      },
+      "now": 1800000000123,
+      "reason": "wrongScope"
+    },
+    {
+      "name": "literal-url-control",
+      "payload": {
+        "version": 1,
+        "scope": {
+          "projectID": "project_customer_recovery_wire_v1",
+          "channel": "ios_app_clip"
+        },
+        "invocation": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "operationID": "22222222-2222-4222-8222-222222222222",
+          "originalURL": "https://customer-recovery-wire.links.example.com/catalog/item?context=tab\tvalue",
+          "capturedAt": 1800000000123,
+          "expiresAt": 1800604800123
+        }
+      },
+      "now": 1800000000123,
+      "reason": "invalidData"
+    }
+  ]
+}
