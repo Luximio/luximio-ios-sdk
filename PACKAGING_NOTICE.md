@@ -1,7 +1,9 @@
-# Development preview
+# Release candidate 0.1.0-rc.1
 
-This private repository contains the standalone Luximio iOS SDK, its synthetic
-tests and build-only CI. There is no public release or version tag yet.
+This unpublished candidate contains the standalone Luximio iOS SDK, its
+synthetic tests and manual build-only CI. The GitHub source repository remains
+private and untagged. The version is tested only in an isolated local mirror
+whose RC tag points to the exact reviewed private source commit.
 
 The selected customer composition is token recovery through
 `TokenRecoverySession`. Earlier fixture, prototype and attested adapters remain
