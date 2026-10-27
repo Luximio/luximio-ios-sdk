@@ -1,9 +1,10 @@
 # Release candidate 0.1.0-rc.1
 
-This unpublished candidate contains the standalone Luximio iOS SDK, its
-synthetic tests and manual build-only CI. The GitHub source repository remains
-private and untagged. The version is tested only in an isolated local mirror
-whose RC tag points to the exact reviewed private source commit.
+This public source prerelease contains the standalone Luximio iOS SDK, its
+synthetic tests and manual build-only CI. Public tag `0.1.0-rc.1` points to
+reviewed source commit `76d9b9459fab383d77cb6a860f4cf9c097432e29`.
+The original local-mirror validation and tagged snapshot are preserved;
+publication does not activate the Luximio recovery service.
 
 The selected customer composition is token recovery through
 `TokenRecoverySession`. Earlier fixture, prototype and attested adapters remain

@@ -1,37 +1,25 @@
 # Luximio Links for iOS
 
-**Release candidate `0.1.0-rc.1` — not published.** This repository contains
+**`0.1.0-rc.1` — public prerelease.** This repository contains
 standalone Swift source for Luximio link routing and App Clip recovery. APIs
 and release support remain provisional; source access does not enable the
 Luximio recovery service.
 
-## Add the private package
+## Install the Swift package
 
-Use `https://github.com/Luximio/luximio-ios-sdk.git` in Xcode's package
-dependencies. For internal validation, pin the exact reviewed SDK commit.
-SwiftPM needs a GitHub identity
-with read access to this private repository, including on CI. Keep those
-credentials in developer/CI Git authentication, never app configuration.
-
-A package manifest can use:
-
-```swift
-.package(url: "https://github.com/Luximio/luximio-ios-sdk.git",
-         revision: "<reviewed SDK commit>")
-```
-
-Replace the revision placeholder with the full candidate commit being reviewed.
-After a public release and matching tag have been explicitly approved, use the
-exact version instead:
+Use `https://github.com/Luximio/luximio-ios-sdk.git` in Xcode’s package
+dependencies and select exact version `0.1.0-rc.1`. The repository and tag are
+public; no GitHub or Luximio download credential is required.
 
 ```swift
 .package(url: "https://github.com/Luximio/luximio-ios-sdk.git",
          exact: "0.1.0-rc.1")
 ```
 
-That version requirement is prospective: there is no matching GitHub release
-tag or public package yet. Private validation uses an isolated local mirror
-tagged with the RC at the reviewed commit, without tagging the GitHub repository.
+The tag points to approved source commit
+`76d9b9459fab383d77cb6a860f4cf9c097432e29`. It preserves the exact reviewed
+candidate snapshot; any prepublication wording there describes its review-time
+state. Current installation and availability notes live in this README.
 
 Link product `LuximioLinks` to the full app and `LuximioLinksAppClip` to the
 App Clip. Both products currently expose the same module: `import LuximioLinks`.

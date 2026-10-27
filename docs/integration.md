@@ -1,10 +1,9 @@
 # Token recovery integration
 
-This is unpublished release candidate `0.1.0-rc.1`, with no GitHub release tag.
-Add the private Swift package at its reviewed commit as described in the
-[README](../README.md). An isolated local-mirror tag is used for version-pinned
-consumer validation; it is not a public release.
-Customer provisioning and production recovery remain disabled.
+Public prerelease `0.1.0-rc.1` is available through the version-pinned Swift
+package described in the [README](../README.md). The tag preserves the exact
+reviewed source. Customer provisioning and production recovery remain disabled
+pending their separate rollout.
 
 Use one registered project, HTTPS invocation host, full-app bundle ID, child
 Clip bundle ID and App Group in both targets and canonical server records.
