@@ -8,6 +8,7 @@ import Foundation
 public struct TokenRecoverySession {
     public let journal: ContinuationJournal
     public let backend: TokenRecoveryBackend
+    private let scope: LinkScope
 
     public init(configuration: LinksConfiguration, containerURL: URL?,
                 transport: any ContinuationHTTPTransport = OwnedContinuationHTTPTransport(responseLimit: .customerRecovery),
@@ -16,8 +17,17 @@ public struct TokenRecoverySession {
         try configuration.validate(bundleIdentifier: bundle)
         let directory = try Self.namespace(configuration: configuration, containerURL: containerURL)
         let journal = try ContinuationJournal(containerURL: directory)
+        self.scope = configuration.scope
         self.journal = journal
         backend = try TokenRecoveryBackend(configuration: configuration, journal: journal, transport: transport, now: now)
+    }
+
+    /// Erases one terminal, acknowledged handoff in this session's scope.
+    /// Coordinate collection, live writers and server handling first. This does
+    /// not erase application/provider copies or certify server-side fulfillment.
+    @discardableResult
+    public func eraseCompleted(invocationID: UUID) throws -> LocalHandoffErasureResult {
+        try journal.eraseCompleted(invocationID: invocationID, scope: scope)
     }
 
     private static func namespace(configuration: LinksConfiguration, containerURL: URL?) throws -> URL {

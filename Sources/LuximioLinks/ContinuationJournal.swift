@@ -5,6 +5,11 @@ public enum JournalPhase: String, Codable, Equatable, Sendable {
     case captured, pinned, held, applying, applied, discarded
 }
 
+/// Result of removing one completed handoff's readable local context.
+public enum LocalHandoffErasureResult: Equatable, Sendable {
+    case erased, alreadyErased, notFound
+}
+
 public struct JournalEntry: Codable, Equatable, Sendable {
     public let invocation: CapturedInvocation
     public var receipt: PinnedReceipt?
@@ -86,6 +91,11 @@ public final class ContinuationJournal {
     /// and any older application commitment and acknowledgement outbox.
     public func capture(_ invocation: CapturedInvocation) throws {
         try mutate { snapshot in
+            let capabilityHash = Self.capabilityHash(invocation.token)
+            guard !(snapshot.erasures ?? []).contains(where: {
+                $0.invocationID == invocation.id || $0.operationID == invocation.operationID ||
+                    $0.capabilityHash == capabilityHash
+            }) else { throw LinkFailure.conflict }
             if let existing = snapshot.entries.first(where: { $0.invocation.id == invocation.id }) {
                 guard existing.invocation == invocation else { throw LinkFailure.conflict }
                 return ((), false)
@@ -93,7 +103,9 @@ public final class ContinuationJournal {
             guard !snapshot.entries.contains(where: {
                 $0.invocation.operationID == invocation.operationID
             }) else { throw LinkFailure.conflict }
-            guard snapshot.entries.count < Self.maximumEntries else { throw LinkFailure.storage }
+            guard snapshot.entries.count + (snapshot.erasures?.count ?? 0) < Self.maximumEntries else {
+                throw LinkFailure.storage
+            }
             if let previous = snapshot.pendingInvocationID,
                let index = snapshot.entries.firstIndex(where: { $0.invocation.id == previous }),
                [.captured, .pinned, .held].contains(snapshot.entries[index].phase) {
@@ -205,18 +217,78 @@ public final class ContinuationJournal {
         }
     }
 
+    /// Removes one terminal, pinned handoff after its acknowledgement outbox has
+    /// cleared. The app must first coordinate collection/writers and its server
+    /// handling; this local result does not establish requester authority, server
+    /// erasure, or removal of values already retained by the app or another task.
+    ///
+    /// A finite marker replaces the entry so saved captures and late SDK writes
+    /// cannot restore its readable context. The first erasure upgrades this same
+    /// locked file to schema 3, which older SDKs reject rather than ignoring it.
+    @discardableResult
+    public func eraseCompleted(invocationID: UUID, scope: LinkScope) throws -> LocalHandoffErasureResult {
+        try scope.validate()
+        return try mutate { snapshot in
+            if let marker = snapshot.erasures?.first(where: { $0.invocationID == invocationID }) {
+                guard marker.scope == scope else { throw LinkFailure.wrongScope }
+                return (.alreadyErased, false)
+            }
+            guard let index = snapshot.entries.firstIndex(where: { $0.invocation.id == invocationID }) else {
+                return (.notFound, false)
+            }
+            let entry = snapshot.entries[index]
+            guard entry.invocation.scope == scope else { throw LinkFailure.wrongScope }
+            guard [.applied, .discarded].contains(entry.phase), entry.acknowledgement == nil else {
+                throw LinkFailure.busy
+            }
+            guard entry.receipt != nil else { throw LinkFailure.unverifiedContext }
+            let marker = ErasureMarker(invocation: entry.invocation)
+            // Legacy raw entries may reuse a capability. Do not erase or block
+            // their unrelated context as a side effect of this scoped operation.
+            guard !snapshot.entries.contains(where: {
+                $0.invocation.id != invocationID && Self.capabilityHash($0.invocation.token) == marker.capabilityHash
+            }) else { throw LinkFailure.conflict }
+            snapshot.entries.remove(at: index)
+            if snapshot.pendingInvocationID == invocationID { snapshot.pendingInvocationID = nil }
+            snapshot.schemaVersion = 3
+            if snapshot.erasures == nil { snapshot.erasures = [] }
+            snapshot.erasures?.append(marker)
+            return (.erased, true)
+        }
+    }
+
     /// Never evicts an unexpired applying marker or outbox to make room. A
     /// server-shortened receipt deadline also ends retention of its local data.
     public func purge(at date: Date) throws {
         guard date.timeIntervalSince1970.isFinite else { throw LinkFailure.invalidData }
         try mutate { snapshot in
             let count = snapshot.entries.count
+            let erasureCount = snapshot.erasures?.count ?? 0
             snapshot.entries.removeAll { ($0.receipt?.expiresAt ?? $0.invocation.expiresAt) <= date }
+            snapshot.erasures?.removeAll { $0.expiresAt <= date }
             if let id = snapshot.pendingInvocationID,
                !snapshot.entries.contains(where: { $0.invocation.id == id }) {
                 snapshot.pendingInvocationID = nil
             }
-            return ((), snapshot.entries.count != count)
+            return ((), snapshot.entries.count != count || (snapshot.erasures?.count ?? 0) != erasureCount)
+        }
+    }
+
+    private struct ErasureMarker: Codable {
+        let invocationID: UUID
+        let operationID: UUID
+        let scope: LinkScope
+        let capabilityHash: String
+        let capturedAt: Date
+        let expiresAt: Date
+
+        init(invocation: CapturedInvocation) {
+            invocationID = invocation.id
+            operationID = invocation.operationID
+            scope = invocation.scope
+            capabilityHash = ContinuationJournal.capabilityHash(invocation.token)
+            capturedAt = invocation.capturedAt
+            expiresAt = invocation.expiresAt
         }
     }
 
@@ -224,6 +296,11 @@ public final class ContinuationJournal {
         var schemaVersion = 2
         var pendingInvocationID: UUID?
         var entries: [JournalEntry] = []
+        var erasures: [ErasureMarker]?
+    }
+
+    private nonisolated static func capabilityHash(_ token: String) -> String {
+        CustomerRecoveryWire.hash(Data(token.utf8))
     }
 
     private static func allows(from: JournalPhase, to: JournalPhase) -> Bool {
@@ -345,6 +422,7 @@ public final class ContinuationJournal {
                                                                   options: .withoutEscapingSlashes) else { return false }
                   return encoded.count <= Self.maximumEntryBytes
               }),
+              Self.validErasureObjects(in: dictionary, entryCount: entries.count),
               let snapshot = try? JSONDecoder().decode(Snapshot.self, from: data) else {
             throw LinkFailure.invalidData
         }
@@ -378,7 +456,10 @@ public final class ContinuationJournal {
     }
 
     private func validate(_ snapshot: Snapshot) throws {
-        guard snapshot.schemaVersion == 2, snapshot.entries.count <= Self.maximumEntries else {
+        let erasures = snapshot.erasures ?? []
+        guard ((snapshot.schemaVersion == 2 && erasures.isEmpty) ||
+               (snapshot.schemaVersion == 3 && snapshot.erasures != nil)),
+              snapshot.entries.count + erasures.count <= Self.maximumEntries else {
             throw LinkFailure.invalidData
         }
         var invocations: Set<UUID> = []
@@ -386,12 +467,14 @@ public final class ContinuationJournal {
         var receipts: Set<UUID> = []
         var deliveries: Set<UUID> = []
         var acknowledgements: Set<UUID> = []
+        var rawCapabilities: Set<String> = []
         for entry in snapshot.entries {
             guard invocations.insert(entry.invocation.id).inserted,
                   operations.insert(entry.invocation.operationID).inserted else { throw LinkFailure.invalidData }
             if [.captured, .pinned, .held].contains(entry.phase),
                snapshot.pendingInvocationID != entry.invocation.id { throw LinkFailure.invalidData }
             try validate(entry)
+            rawCapabilities.insert(Self.capabilityHash(entry.invocation.token))
             if let receipt = entry.receipt {
                 guard receipts.insert(receipt.id).inserted,
                       deliveries.insert(receipt.deliveryID).inserted else { throw LinkFailure.invalidData }
@@ -402,9 +485,35 @@ public final class ContinuationJournal {
                 }
             }
         }
+        var erasedCapabilities: Set<String> = []
+        for marker in erasures {
+            guard invocations.insert(marker.invocationID).inserted,
+                  operations.insert(marker.operationID).inserted,
+                  erasedCapabilities.insert(marker.capabilityHash).inserted,
+                  !rawCapabilities.contains(marker.capabilityHash),
+                  marker.capabilityHash.range(of: #"^[a-f0-9]{64}\z"#, options: .regularExpression) != nil,
+                  marker.capturedAt.timeIntervalSince1970.isFinite,
+                  marker.expiresAt.timeIntervalSince1970.isFinite,
+                  marker.expiresAt > marker.capturedAt,
+                  marker.expiresAt <= marker.capturedAt.addingTimeInterval(Self.lifetime) else {
+                throw LinkFailure.invalidData
+            }
+            do { try marker.scope.validate() } catch { throw LinkFailure.invalidData }
+        }
         if let id = snapshot.pendingInvocationID {
             guard let entry = snapshot.entries.first(where: { $0.invocation.id == id }),
                   entry.phase != .applied, entry.phase != .discarded else { throw LinkFailure.invalidData }
+        }
+    }
+
+    private static func validErasureObjects(in dictionary: [String: Any], entryCount: Int) -> Bool {
+        guard let value = dictionary["erasures"] else { return true }
+        guard let markers = value as? [[String: Any]], entryCount + markers.count <= maximumEntries else { return false }
+        let keys: Set<String> = ["invocationID", "operationID", "scope", "capabilityHash", "capturedAt", "expiresAt"]
+        let scopeKeys: Set<String> = ["projectID", "fullAppBundleID", "clipBundleID"]
+        return markers.allSatisfy { marker in
+            guard Set(marker.keys) == keys, let scope = marker["scope"] as? [String: Any] else { return false }
+            return Set(scope.keys) == scopeKeys
         }
     }
 

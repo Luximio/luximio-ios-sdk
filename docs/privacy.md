@@ -1,6 +1,6 @@
 # iOS SDK privacy inventory
 
-Reviewed **27 October 2026** for candidate **`0.1.0-rc.1`**. This inventory
+Prepared **30 October 2026** for unpublished candidate **`0.1.0-rc.2`**. This inventory
 describes implemented SDK behavior. It is an input to the app owner's review, not submitted App Store
 answers or a claim that production recovery is enabled.
 
@@ -59,18 +59,38 @@ receipt and completion state. On iOS the file/directory protection uses
 no-follow checks also apply. The SDK adds no separate application-layer
 encryption. The macOS build does not apply the iOS file-protection class.
 
-Expiry is enforced during use. Journal removal is an explicit purge operation
-used by Clip capture and the coordinator's completion-work path; simple journal
-reads do not purge. An inactive app can retain expired files until later SDK
-work. Completion clears its queued acknowledgement, not immediately every
-saved capability/context byte.
+Expiry is enforced during use. Raw journal entries use their receipt expiry,
+or original invocation expiry before pinning. Purge runs when subsequent SDK
+work calls it; simple journal reads do not purge. An inactive app can retain
+expired files until that work succeeds. Completion clears the queued
+acknowledgement, not immediately every saved capability/context byte.
 
-The implemented token service bounds pending context validity to at most seven
-days. Observed completion/rejection scrubs readable server context; finite replay
-markers retain minimal identifiers/hashes until their original deletion
-deadline. Retries do not renew these periods. Eligibility for deletion is not
-proof that scheduled cleanup ran. Verify actual deployment cleanup, access,
-exports and backup retention separately; SDK storage cannot erase remote copies.
+RC2's [scoped local erasure](local-erasure.md) can remove one pinned, terminal,
+ACK-cleared entry's raw URL, capability, receipt/destination and completion
+payload. It retains only the invocation/create-operation IDs, project/app scope,
+a capability hash and original capture/expiry dates. These can still be linkable,
+pseudonymous records. The marker follows **original invocation expiry**, up to
+the original seven-day capture lifetime, even if receipt expiry was shorter.
+It shares the 32-record capacity limit, is never renewed by retry/erasure and
+is physically removed only by a later successful purge. No background deletion
+job is added. The new local marker fields are not sent to a provider by this
+operation.
+
+The first erasure writes journal schema 3 into the existing locked file. Both
+app roles must use the upgraded SDK; the previous RC rejects this schema. This
+is an active-journal operation, not a remote wipe or guaranteed removal of app
+memory, exports, backups, restored copies or provider history. Local removal
+and any necessary remaining-marker review are parts of the app's scoped case
+procedure, not automatic certification of an all-copy result.
+
+The implemented token service caps readable context at first admission plus
+seven days and the requested expiry. Recorded terminal completion/rejection
+scrubs that context. Server replay markers have a fixed deadline based on
+admission and original requested expiry; the capture-clock allowance can make
+that bound seven days plus five minutes after admission. Retries do not renew
+it. Eligibility for deletion is not proof that scheduled cleanup ran. Verify
+actual deployment cleanup, access, exports and backup retention separately;
+SDK storage cannot erase remote copies.
 
 The included attested adapter additionally retains protected key metadata,
 registration retry evidence and pins locally. Its service uses fixed 30-day key
@@ -95,8 +115,9 @@ change purposes and tracking answers.
 Provider invocation logs may retain request URLs, including a direct-resolution
 query. Verify effective logging, recipients, retention and access on the actual
 deployment. Do not log tokens, proof, original URLs or whole delivery objects.
-The SDK exposes no user-facing erasure UI; uninstalling does not erase service
-or provider records. Whole-app disclosures, deletion procedures and third-party
+The SDK exposes a local erasure API, not a user-facing rights-request UI or a
+service/provider deletion endpoint. Uninstalling does not erase service or
+provider records. Whole-app disclosures, deletion procedures and third-party
 notice/provider review remain the app owner's release responsibilities.
 
 The SDK's declaration does not replace the complete app's answers. Apple

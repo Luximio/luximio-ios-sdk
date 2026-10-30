@@ -1,9 +1,11 @@
 # Token recovery integration
 
-Public prerelease `0.1.0-rc.1` is available through the version-pinned Swift
-package described in the [README](../README.md). The tag preserves the exact
-reviewed source. Customer provisioning and production recovery remain disabled
-pending their separate rollout.
+This guide describes unpublished release candidate `0.1.0-rc.2`. Validate the
+reviewed SDK-only local Git mirror as described in the [README](../README.md).
+Its candidate tag is not a public release. The public repository's issued
+`0.1.0-rc.1` remains unchanged and does not expose scoped erasure.
+Customer setup and production recovery remain disabled pending their separate
+rollout.
 
 Use one registered project, HTTPS invocation host, full-app bundle ID, child
 Clip bundle ID and App Group in both targets and canonical server records.
@@ -83,3 +85,28 @@ Gate SDK work separately if your app requires a choice before collection.
 Verify signed Clip-to-full-app handoff, restart/holds, offline retry, current
 permissions, cancellation and replay on the customer's actual setup. Review
 [privacy and retention](privacy.md); never log tokens or whole link contexts.
+
+## Erase one completed local handoff
+
+RC2 adds the following main-actor operation:
+
+```swift
+let result = try session.eraseCompleted(invocationID: completedInvocationID)
+```
+
+Use the session's original project/app/host configuration. Before calling,
+verify the case's authority, coordinate the appropriate server handling and stop
+new collection/writers for the affected integration. The selected entry must
+have a pinned receipt, an applied/discarded phase and no pending acknowledgement.
+A normal cancellation or successful ACK is not itself local erasure.
+
+The result is `.erased`, `.alreadyErased` or `.notFound`; absence in this journal
+is not an all-system absence result. Active or unacknowledged state fails with
+`.busy`; do not clear outboxes or fabricate pins merely to bypass the guard.
+The operation does not cancel a different pending handoff or drain all app work.
+
+**Upgrade both roles before enabling this call.** First erasure writes schema 3
+into the same journal file, and the earlier SDK rejects it. The minimal replay
+marker follows the original invocation expiry, including when a receipt had a
+shorter expiry. See [local erasure](local-erasure.md) for error handling,
+retention, rollback limits and the required device/writer validation.

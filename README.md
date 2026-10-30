@@ -1,64 +1,66 @@
 # Luximio Links for iOS
 
-**`0.1.0-rc.1` — public prerelease.** This repository contains
-standalone Swift source for Luximio link routing and App Clip recovery. APIs
-and release support remain provisional; source access does not enable the
-Luximio recovery service.
+**Release candidate `0.1.0-rc.2` — prepared offline, not published.** This
+standalone Swift package provides link routing and token-based App Clip
+recovery. RC2 adds [scoped local handoff erasure](docs/local-erasure.md).
+Source access does not activate the Luximio recovery service.
 
-## Install the Swift package
+The public SDK repository already contains
+[`0.1.0-rc.1`](https://github.com/Luximio/luximio-ios-sdk/tree/0.1.0-rc.1).
+That issued version is preserved and does not provide the new erasure API.
+Do not treat an RC2 local candidate or build result as a public SDK release.
 
-Use `https://github.com/Luximio/luximio-ios-sdk.git` in Xcode’s package
-dependencies and select exact version `0.1.0-rc.1`. The repository and tag are
-public; no GitHub or Luximio download credential is required.
+## Validate the candidate
+
+For offline review, use the generated SDK-only Git mirror and its exact local
+`0.1.0-rc.2` tag. Pin the reviewed candidate revision and verify it against its
+archive/inventory record. The mirror is a validation input, not a remote release.
+
+After RC2 publication and its matching tag have been separately approved, a
+package manifest can use:
 
 ```swift
 .package(url: "https://github.com/Luximio/luximio-ios-sdk.git",
-         exact: "0.1.0-rc.1")
+         exact: "0.1.0-rc.2")
 ```
 
-The tag points to approved source commit
-`76d9b9459fab383d77cb6a860f4cf9c097432e29`. It preserves the exact reviewed
-candidate snapshot; any prepublication wording there describes its review-time
-state. Current installation and availability notes live in this README.
+This RC2 version requirement is **prospective**. Until publication, it is not
+an installation instruction for the public repository. Existing public RC1
+consumers can continue to pin `0.1.0-rc.1`; do not call RC2-only APIs from it.
 
-Link product `LuximioLinks` to the full app and `LuximioLinksAppClip` to the
-App Clip. Both products currently expose the same module: `import LuximioLinks`.
-The package requires Swift tools 6.2 and Swift language mode 6. Declared compile
-floors are iOS 15 and macOS 12; compilation is not runtime coverage for every OS.
+Link product `LuximioLinks` to the full app and `LuximioLinksAppClip` to its
+App Clip. Both products expose `import LuximioLinks`. The package requires
+Swift tools 6.2 and Swift language mode 6. Declared compile floors are iOS 15
+and macOS 12; compilation does not establish runtime coverage on every OS.
 
-## Candidate scope
+## Integration and migration
 
-- `TokenRecoverySession` is the selected customer composition. It shares finite
-  recovery context between the signed App Clip and full app through the App
-  Group; it does not transfer a usable App Attest key across that boundary.
+Start with the [token integration guide](docs/integration.md). Construct each
+role's paired `TokenRecoverySession`, use the real signed App Group container,
+and forward lifecycle events to an app-owned router.
+
 - The full app owns onboarding, authentication, resource authorization and
-  synchronous navigation. The coordinator supports holds, explicit retry,
-  completion and cancellation before a newer manual/direct-link choice.
-- A bearer capability, native platform handoff or original campaign context
-  does not establish user identity, trustworthy conversion attribution or
-  permission to open a private resource.
-- Earlier fixture, private and attested adapters remain in the module as
-  separate profiles; customer failures do not fall back to them.
-- Production recovery, customer provisioning and authenticated setup guides
-  remain disabled. Package download alone grants no service entitlement.
+  synchronous navigation. A recovered capability or campaign parameter does
+  not establish identity, verified attribution or access to a private resource.
+- The selected token profile shares finite context through the App Group. It
+  does not rely on moving an App Attest key from the Clip to the full app.
+- Earlier fixture, private and attested adapters remain separate profiles in
+  the module. A customer failure does not fall back to those profiles.
+- Recovery admission, customer setup screens and authenticated guides remain
+  disabled pending their separate rollout. Package access grants no service
+  entitlement or paid-plan override.
 
-## Integrate and review
+**Upgrade both the full app and App Clip before using local erasure.** Its first
+successful use writes journal schema 3 in the existing locked file. RC1 rejects
+that schema; downgrading after erasure therefore fails closed. Do not delete or
+reset the journal to make an older reader work. Review the exact preconditions,
+marker lifetime and limits in [local erasure](docs/local-erasure.md).
 
-Start with the [token recovery integration guide](docs/integration.md). It
-constructs each role's paired `TokenRecoverySession`, uses the real signed App
-Group container and forwards lifecycle events to an app-owned router.
-
-The selected token profile uses a finite bearer capability. It does not prove
-an installation, identity, trustworthy attribution, payment or permission to
-open a private resource. The full app owns authentication and authorization.
-The package also contains earlier adapters; their presence does not make those
-profiles generally available or provide a fallback when recovery fails.
-
-Review the [privacy inventory](docs/privacy.md), the bundled
+Read the [privacy inventory](docs/privacy.md), the bundled
 [privacy manifest](Sources/LuximioLinks/Resources/PrivacyInfo.xcprivacy) and the
 complete consuming app. The manifest remains cumulative across SDK adapters.
 
-## Build
+## Build and test
 
 From this repository with Swift 6.2 or later:
 
@@ -67,14 +69,11 @@ swift test
 swift build --configuration release
 ```
 
-The Build SDK workflow is started manually from GitHub Actions. It has read-only
-repository permissions and no release or deployment steps. Importing this
-workflow does not start a hosted build. CI tests and builds checked-in source only. A successful build does not verify signed
-App Group handoff, a store installation path or a customer's provider setup.
-The package/dependency and privacy reviews are inputs to release review;
-whole-app declarations and broader runtime validation remain separate.
-Customer setup screens, authenticated guides and production
-recovery remain disabled pending their separate release work.
+The Build SDK workflow is started manually, has read-only repository permissions
+and contains no release/deployment step. Preparing or importing a candidate does
+not start a hosted build. Tests use synthetic data and injected dependencies.
+Successful package builds do not prove signed App Group behavior, physical
+Clip/store installation, provider authorization or complete data erasure.
 
 ## License
 
@@ -82,4 +81,4 @@ Dot Square-authored SDK code is licensed under the [Apache License 2.0](LICENSE)
 Retain [NOTICE](NOTICE); third-party components retain their own terms. The
 license covers this SDK, not the Luximio backend, dashboard or service. It grants
 no service access or paid-plan entitlement and changes no Starter or future Pro
-feature gates.
+feature gates. See [dependencies and notices](docs/dependencies.md).

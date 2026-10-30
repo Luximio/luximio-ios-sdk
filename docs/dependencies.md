@@ -1,6 +1,6 @@
 # Dependencies and notices
 
-Reviewed **27 October 2026** for candidate **`0.1.0-rc.1`**. `Package.swift`
+Prepared **30 October 2026** for unpublished candidate **`0.1.0-rc.2`**. `Package.swift`
 declares no external package or binary-target dependencies. Both library
 products compile the same `LuximioLinks` target; the test target and its
 synthetic fixtures are separate from the products consumed by an app.
@@ -8,7 +8,7 @@ synthetic fixtures are separate from the products consumed by an app.
 | Platform dependency | Reviewed SDK use |
 | --- | --- |
 | Foundation | URLs, bounded Codable/JSON models, dates, files and ephemeral URLSession transport |
-| CryptoKit | SHA-256 hashes for invocation/receipt/scope binding and the retained adapters |
+| CryptoKit | SHA-256 hashes for invocation/receipt/scope binding, local erasure replay markers and the retained adapters |
 | Security | OS random-byte generation for capabilities/nonces |
 | DeviceCheck | Retained experimental App Attest adapter; unavailable-platform branches fail closed |
 | Darwin | Owned-file metadata, permissions, no-follow open and short file locking/synchronization |
@@ -31,5 +31,9 @@ experimental adapters remain included in the module, with the privacy manifest
 covering its cumulative capabilities.
 
 Before public distribution, review the complete app and dependency inventory,
-retained notices and selected distribution method. This private source import
-does not certify a whole-app licensing, privacy or platform-policy review.
+retained notices and selected distribution method. This offline candidate
+preparation does not certify a whole-app licensing, privacy or platform-policy
+review. Its new local erasure operation adds no external package, binary or
+provider dependency and does not alter LICENSE, NOTICE or the cumulative privacy
+resource. Review the [storage/upgrade contract](local-erasure.md) separately from
+dependency results.
